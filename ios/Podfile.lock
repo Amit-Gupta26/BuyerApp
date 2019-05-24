@@ -60,6 +60,8 @@ PODS:
     - GoogleUtilities/Logger
   - React (0.59.8):
     - React/Core (= 0.59.8)
+  - react-native-geocoder (0.5.0):
+    - React
   - react-native-google-maps (0.24.2):
     - Google-Maps-iOS-Utils (= 2.1.0)
     - GoogleMaps (= 2.5.0)
@@ -128,6 +130,7 @@ DEPENDENCIES:
   - Google-Maps-iOS-Utils
   - GoogleMaps
   - GoogleUtilities (= 5.3.6)
+  - react-native-geocoder (from `../node_modules/react-native-geocoder`)
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - React/Core (from `../node_modules/react-native`)
@@ -161,6 +164,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   React:
     :path: "../node_modules/react-native"
+  react-native-geocoder:
+    :path: "../node_modules/react-native-geocoder"
   react-native-google-maps:
     :path: "../node_modules/react-native-maps"
   react-native-maps:
@@ -177,10 +182,11 @@ SPEC CHECKSUMS:
   GoogleMaps: c087b8e5dfe87ca6ebf59adb9b4894a4146bec4f
   GoogleUtilities: 95996bea7c7d9b8fb811b7507669a4a8762f80c7
   React: 1d605e098d69bdf08960787f3446f0a9dc2e2ccf
+  react-native-geocoder: 33b16a5929aa868fef37acb4f7ee10a428cd5fff
   react-native-google-maps: 77af0fa3b5325c72c107d054677911f6e6170496
   react-native-maps: bb480348a3fe1e5a811fed1ba3387b329161c5cc
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: 667747b7a78920529d40ef76f3e29a46ea14753a
+PODFILE CHECKSUM: 398e727dd76ba5637ec789f6cd8e1120b94f6680
 
 COCOAPODS: 1.5.0

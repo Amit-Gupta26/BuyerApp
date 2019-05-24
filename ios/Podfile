@@ -36,6 +36,8 @@ target 'OwnersApp' do
   pod 'Google-Maps-iOS-Utils'
   pod 'GoogleUtilities', '= 5.3.6'
 
+    pod 'react-native-geocoder', :path => '../node_modules/react-native-geocoder'
+
   end
 
 
