@@ -38,6 +38,8 @@ target 'OwnersApp' do
 
     pod 'react-native-geocoder', :path => '../node_modules/react-native-geocoder'
 
+    pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
   end
 
 
