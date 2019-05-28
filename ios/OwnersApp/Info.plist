@@ -4,6 +4,7 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
+		<string>Graphik-Regular.otf</string>
 		<string>Graphik-Medium.otf</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>

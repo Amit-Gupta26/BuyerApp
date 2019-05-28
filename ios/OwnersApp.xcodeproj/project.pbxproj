@@ -37,6 +37,7 @@
 		2DCD954D1E0B4F2C00145EB5 /* OwnersAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* OwnersAppTests.m */; };
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		3A6E7A90229BD4DE00FF272B /* Graphik-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3A6E7A8E229BD45600FF272B /* Graphik-Medium.otf */; };
+		3A6E7AD1229D266100FF272B /* Graphik-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3A6E7AAB229D258C00FF272B /* Graphik-Regular.otf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		D6F691F68C76BA27F4E78E93 /* libPods-OwnersApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A0B0FB9FF019E003BF97E4E /* libPods-OwnersApp.a */; };
@@ -345,6 +346,7 @@
 		2D02E4901E0B4A5D006451C7 /* OwnersApp-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OwnersApp-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A6E7A8E229BD45600FF272B /* Graphik-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Graphik-Medium.otf"; sourceTree = "<group>"; };
+		3A6E7AAB229D258C00FF272B /* Graphik-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Graphik-Regular.otf"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		6438AF53ACC80FFC5C797020 /* Pods-OwnersApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OwnersApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-OwnersApp/Pods-OwnersApp.release.xcconfig"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -542,6 +544,7 @@
 		3A6E7A60229BD43500FF272B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3A6E7AAB229D258C00FF272B /* Graphik-Regular.otf */,
 				3A6E7A8E229BD45600FF272B /* Graphik-Medium.otf */,
 			);
 			name = Resources;
@@ -1085,6 +1088,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A6E7AD1229D266100FF272B /* Graphik-Regular.otf in Resources */,
 				3A6E7A90229BD4DE00FF272B /* Graphik-Medium.otf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
