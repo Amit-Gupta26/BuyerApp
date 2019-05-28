@@ -50,6 +50,24 @@ class SearchScreen extends Component {
       .then(data => {
         if (data) {
           const recentSearch = JSON.parse(data);
+          if (recentSearch.filters) {
+            this.props.searchStore.assignFilters(recentSearch.filters);
+          }
+          if (recentSearch.searchId) {
+            this.props.searchStore.searchId = recentSearch.searchId;
+          }
+          if (recentSearch.searchTerm) {
+            this.props.searchStore.searchTerm = recentSearch.searchTerm;
+          }
+          if (recentSearch.searchUrl){
+            if (recentSearch.searchUrl.includes("homes-for-sale")){
+              this.props.searchStore.listingType = "MLS"
+            }
+            if (recentSearch.searchUrl.includes("for-sale-by-owner")){
+              this.props.searchStore.listingType = "FSBO"
+            }
+          }
+
           console.log(`${recentSearch.searchUrl}?${recentSearch.filters}`);
           this.props.searchStore.searchText = recentSearch.searchTerm;
           this.setState({
@@ -66,7 +84,7 @@ class SearchScreen extends Component {
           }
           if (recentSearch.filters) {
             searchStore.setSearchURLData(
-              `${recentSearch.searchUrl}?${recentSearch.filters}`,
+              recentSearch.searchUrl,
               true, mlsSearch
             );
           } else {
@@ -129,7 +147,7 @@ class SearchScreen extends Component {
         this.setState({ isLoading: true, isInputText: true });
         searchStore.setSearchURLData(searchStore.searchUrl, false, searchStore.isMlsSearch);
       } else {
-        if(suggestionItem.type=="ZIP"){
+        if (suggestionItem.type == "ZIP") {
           searchText = suggestionItem.label;
         } else if (suggestionItem.level1Text != "" && suggestionItem.level2Text != "") {
           searchText = suggestionItem.level1Text + ", " + suggestionItem.level2Text;
@@ -174,7 +192,7 @@ class SearchScreen extends Component {
 
     toValue = 0;
     if (value[0].sellerFirstName != undefined) {
-      let cpl = Math.floor((width - 4) / (10 / 1.5) );
+      let cpl = Math.floor((width - 4) / (10 / 1.5));
 
       let stringTempvalue = "Listing Courtesy of " + value[0].sellerFirstName + " " + value[0].sellerLastName + ", " + value[0].brokerageFirmName;
       numberOfLines = stringTempvalue.length / (width - 4)
@@ -211,7 +229,7 @@ class SearchScreen extends Component {
     ).start();
 
   }
-  
+
   render() {
     const { searchStore } = this.props;
 
@@ -269,9 +287,9 @@ class SearchScreen extends Component {
         <View style={styles.searchBar}>
           <View style={styles.inputView}>
             <Image source={require('../../assets/image/ic_search.png')} style={styles.inputSearchIcon} />
-            <Text onPress={() => this._fecthSuggestions()} overflow="hidden" style={styles.inputTextStyle} 
-                  testID={"srpSearchInputText"} nativeID={"srpSearchInputText"}
-                  accessibilityLabel={"srpSearchInputText"}>{searchStore.searchText}</Text>
+            <Text onPress={() => this._fecthSuggestions()} overflow="hidden" style={styles.inputTextStyle}
+              testID={"srpSearchInputText"} nativeID={"srpSearchInputText"}
+              accessibilityLabel={"srpSearchInputText"}>{searchStore.searchText}</Text>
           </View>
         </View>
         <View style={styles.mapListSwipeTabContainer}>

@@ -1,6 +1,9 @@
 import { observable, action, computed, runInAction, decorate, get, has } from "mobx";
 import api from "../../api/Api";
-import { RECENT_SEARCH } from "../../data/local";
+import { RECENT_SEARCH, KEY_HAS_APPLIED_PREFERENCES, storeJsonItem, storeItem } from "../../data/local";
+import urlBuilder from "../../utils/FilterURLBuilder";
+
+
 class SearchStore {
   isLoading = false;
   isPropertyDetails = false;
@@ -26,9 +29,11 @@ class SearchStore {
   isClearData = false;
   showList = false;
   sectionFirstItem = null;
+  searchId = "";
+  searchTerm = "";
 
   //filter Data
-  
+
   propertyTypes = [];
   beds = null;
   baths = null;
@@ -42,6 +47,7 @@ class SearchStore {
   isOpenHouse = false;
   isPriceReduced = false;
   daysOnOwners = null;
+  preferences = [];
 
   updatePopertyTypes = (value, propertyTypesLabel) => {
     this.propertyTypes = value;
@@ -57,18 +63,36 @@ class SearchStore {
   };
 
   updatePriceRange = (minPrice, maxPrice) => {
-    this.minPrice = minPrice;
-    this.maxPrice = maxPrice;
+    if ((minPrice === "No Min") && (maxPrice === "No Max")) {
+      this.minPrice = null;
+      this.maxPrice = null;
+    }
+    else {
+      this.minPrice = minPrice;
+      this.maxPrice = maxPrice;
+    }
   };
 
   updateSquareFeetArea = (minSquareFeet, maxSquareFeet) => {
-    this.minSquareFeet = minSquareFeet;
-    this.maxSquareFeet = maxSquareFeet;
+    if ((minSquareFeet === "No Min") && (maxSquareFeet === "No Max")) {
+      this.minSquareFeet = null;
+      this.maxSquareFeet = null;
+    }
+    else {
+      this.minSquareFeet = minSquareFeet;
+      this.maxSquareFeet = maxSquareFeet;
+    }
   };
 
   updateYearBuilt = (minYearBuilt, maxYearBuilt) => {
-    this.minYearBuilt = minYearBuilt;
-    this.maxYearBuilt = maxYearBuilt;
+    if ((minYearBuilt === "No Min") && (maxYearBuilt === "No Max")) {
+      this.minYearBuilt = null;
+      this.maxYearBuilt = null;
+    }
+    else {
+      this.minYearBuilt = minYearBuilt;
+      this.maxYearBuilt = maxYearBuilt;
+    }
   };
 
   updateListingType = (listingType) => {
@@ -84,7 +108,12 @@ class SearchStore {
   };
 
   updateDaysOnowners = daysOnOwners => {
-    this.daysOnOwners = daysOnOwners;
+    if (daysOnOwners === "Any") {
+      this.daysOnOwners = null;
+    }
+    else {
+      this.daysOnOwners = daysOnOwners;
+    }
   };
 
   fetchSuggestions = query => {
@@ -183,7 +212,7 @@ class SearchStore {
     this.suggestions = suggestionsArr;
     if (!this.isClearData) {
       if (
-        errorMessage ==
+        errorMessage ===
         "We couldn't figure out where you want to search. Please check the spelling. You can search by city, county, neighborhood, school, zip code and MLS ID."
       ) {
         this.isSuggestionsEmpty = true;
@@ -211,6 +240,8 @@ class SearchStore {
   };
 
   fetchSearchURL = suggestion => {
+    this.searchTerm = `${suggestion.level1Text}, ${suggestion.level2Text}`;
+    this.searchId = suggestion.id;
     // this.isLoading = true;
     api.Search.getSearchUrl(suggestion)
       .then(({ url }) => this.setSearchURLData(url, false, false))
@@ -221,7 +252,57 @@ class SearchStore {
       );
   };
 
-  fetchSearchURLForAddress = ({ navigation, params }, suggestionItem,callback) => {
+  applyFilter = () => {
+    this.setSearchURLData(
+      this.searchUrl,
+      this.hasFilter, this.isMlsSearch
+    );
+  };
+
+  assignFilters = (filters) => {
+    var arr = filters.split('&');
+    arr.forEach((value, i) => {
+      var tempArr = value.split('=');
+      if (tempArr[0].includes("bed")) {
+        this.beds = tempArr[1];
+      }
+      if (tempArr[0].includes("bath")) {
+        this.baths = tempArr[1];
+      }
+      if (tempArr[0].includes("price")) {
+        var tempValueArr = tempArr[1].split('-');
+        this.minPrice = tempValueArr[0];
+        this.maxPrice = tempValueArr[1];
+      }
+      if (tempArr[0].includes("squarefootage")) {
+        var tempValueArr = tempArr[1].split('-');
+        this.minSquareFeet = tempValueArr[0];
+        this.maxSquareFeet = tempValueArr[1];
+      }
+      if (tempArr[0].includes("yearbuilt")) {
+        var tempValueArr = tempArr[1].split('-');
+        this.minYearBuilt = tempValueArr[0];
+        this.maxYearBuilt = tempValueArr[1];
+      }
+      if (tempArr[0].includes("openHouse")) {
+        this.isOpenHouse = true;
+      }
+      if (tempArr[0].includes("priceReduce")) {
+        this.isPriceReduced = true;
+      }
+      if (tempArr[0].includes("newListings")) {
+        this.daysOnOwners = tempArr[1];
+      }
+      if (tempArr[0].includes("proptype")) {
+        this.propertyTypes.push(tempArr[1]);
+      }
+      if (tempArr[0].includes("mr")) {
+        this.preferences.push(tempArr[1]);
+      }
+    });
+  }
+
+  fetchSearchURLForAddress = ({ navigation, params }, suggestionItem, callback) => {
     api.Search.getSearchUrl(suggestionItem)
       .then(({ url }) => this.setAddressSearchUrl(navigation, url, callback))
       .catch(({ error }) =>
@@ -260,23 +341,41 @@ class SearchStore {
       );
       callback(this.pdpUrl, navigation, false, params, suggestionItem);
     } else {
-      this.pdpUrl =  url;
+      this.pdpUrl = url;
       callback(this.pdpUrl, navigation, true, params, suggestionItem);
     }
   };
 
   setSearchURLData = (url, hasFilter, isMlsSearch) => {
+    var tempSearchUrl = "";
+    if (this.listingType == "FSBO"){
+      if (this.searchUrl.includes("homes-for-sale")){
+        tempSearchUrl = url.replace(/homes-for-sale/g, "for-sale-by-owner");
+      }
+    }
+
+    if (this.listingType == "MLS"){
+      if (this.searchUrl.includes("for-sale-by-owner")){
+        tempSearchUrl = url.replace(/for-sale-by-owner/g, "homes-for-sale");
+      }
+    }
+
+    if (tempSearchUrl == ""){
+      this.searchUrl = url;
+    }
+    else{
+      this.searchUrl = tempSearchUrl;
+    }
+
     this.isMlsSearch = isMlsSearch;
     this.hasFilter = hasFilter;
-    let symbol = hasFilter ? "&" : "?";
-    this.searchUrl = url;
     this.currentListPageIndex = 1;
     this.boundaryURL = "";
     this.isBoundaryCall = false;
     this.listProperties = [];
-    this.fetchListProperties(`${url}${symbol}ajaxsearch=true`, false, false);
+    this.fetchListProperties(`${this.searchUrl}`, false, false);
     this.fetchMapProperties(
-      `${url}${symbol}ajaxsearch=true&view=map`,
+      `${this.searchUrl}`,
       false,
       false,
       false
@@ -288,12 +387,18 @@ class SearchStore {
     this.isLoading = true;
     this.isBoundaryCall = isBoundaryCall;
     this.isPolygonSearch = isPolygonSearch;
-    var urlWithPolygon = url;
-    if (isBoundaryCall == true) {
-      urlWithPolygon = urlWithPolygon + "&polygon=" + isPolygonSearch;
+    var urlWithPolygon = `${url}?`;
+    var filterData = this.getFilterData()
+
+    if (isBoundaryCall === true) {
+      urlWithPolygon = urlWithPolygon + "polygon=" + isPolygonSearch + "&ajaxsearch=true" ;
     } else {
-      urlWithPolygon = urlWithPolygon + "&polygon=true";
+      urlWithPolygon = urlWithPolygon + "polygon=true" + "&ajaxsearch=true" ;
     }
+    if (filterData !== "" && (filterData != null)) {
+      urlWithPolygon = urlWithPolygon + "&" + filterData
+    }
+
     api.Search.search(urlWithPolygon)
       .then(({ data }) => this.setListSearchData(data))
       .catch(({ error }) =>
@@ -318,19 +423,63 @@ class SearchStore {
     this.isLoading = false;
     this.resultCount = data.resultCount;
   };
+  
+  getFilterData() {
+    return new urlBuilder()
+    .setPropertyTypes(this.propertyTypes)
+    .setBeds(this.beds)
+    .setBaths(this.baths)
+    .setMinPrice(this.minPrice)
+    .setMaxPrice(this.maxPrice)
+    .setMinSquareFeet(this.minSquareFeet)
+    .setMaxSquareFeet(this.maxSquareFeet)
+    .setMinYearBuilt(this.minYearBuilt)
+    .setMaxYearBuilt(this.maxYearBuilt)
+    .setListingType(this.listingType)
+    .setIsOpenHouse(this.isOpenHouse)
+    .setIsPriceReduced(this.isPriceReduced)
+    .setDaysOnOwners(this.daysOnOwners)
+    .setPreferences(this.preferences)
+    .build();
+};
+
 
   fetchMapProperties = (url, isBoundaryCall, isPolygonSearch, isMlsSearch) => {
     this.isLoading = true;
     this.isBoundaryCall = isBoundaryCall;
     this.isPolygonSearch = isPolygonSearch;
-    var urlWithPolygon = url;
+    var urlWithPolygon = `${url}?`;
+    var filterData =  this.getFilterData()
+
     if (!isMlsSearch) {
-      if (isBoundaryCall == true) {
-        urlWithPolygon = urlWithPolygon + "&polygon=" + isPolygonSearch;
+      if (isBoundaryCall === true) {
+        urlWithPolygon = urlWithPolygon + "polygon=" + isPolygonSearch + "&ajaxsearch=true&view=map";
       } else {
-        urlWithPolygon = urlWithPolygon + "&polygon=true";
+        urlWithPolygon = urlWithPolygon + "polygon=true" + "&ajaxsearch=true&view=map";
+      }
+      if (filterData !== "" && (filterData != null)) {
+        urlWithPolygon = urlWithPolygon + "&" + filterData
       }
     }
+
+    var tempArr = url.split('?');
+    var searchUrlToSave = ""
+    if (tempArr.length > 0) {
+      searchUrlToSave = tempArr[0];
+    }
+
+
+    const recentSearchTobeSaved = {
+      searchTerm: this.searchTerm,
+      searchId: this.searchId,
+      searchUrl: searchUrlToSave,
+      isMlsSearch: this.isMlsSearch,
+      filters: filterData
+    };
+    storeJsonItem(RECENT_SEARCH, recentSearchTobeSaved)
+      .then(data => console.log("saved success"))
+      .then(error => console.log("Error"));
+
     api.Search.search(urlWithPolygon)
       .then(({ data }) => this.setMapSearchData(data))
       .catch(({ error }) =>
@@ -339,6 +488,9 @@ class SearchStore {
         })
       );
   };
+
+
+
 
   setMapSearchData = data => {
     this.isPropertyDetails = data.propertyDetails;

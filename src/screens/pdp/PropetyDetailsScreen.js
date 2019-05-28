@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   ScrollView,
   StatusBar,
-  Platform,
+  Platform
 } from "react-native";
 import ActivityIndicator from "../../components/ActivityLoader";
 import PDPImagePreview from "../../views/pdp/main/PDPImagePreview";

@@ -381,10 +381,6 @@ class SearchAutoSuggest extends Component {
                             sections={searchStore.suggestions}
                             keyboardShouldPersistTaps={true}
                             renderItem={({ item }) => {
-                                if (!firstItem && item.level2Text.length > 1) {
-                                    searchStore.sectionFirstItem = item;
-                                    firstItem = true;
-                                }
                                 let suggestionTextFirstpart = "";
                                 var suggestionTextSecondpart = "";
                                 if (this.state.searchText != null) {
@@ -393,6 +389,10 @@ class SearchAutoSuggest extends Component {
                                     suggestionTextFirstpart = item.level1Text.substring(0, searchTextWOTrailingSpace.length) ? item.level1Text.substring(0, searchTextWOTrailingSpace.length) : ""
                                     if (indexVal > -1) {
                                         suggestionTextSecondpart = item.level1Text.substring(indexVal + searchTextWOTrailingSpace.length);
+                                        if (!firstItem && item.level2Text.length > 1) {
+                                            searchStore.sectionFirstItem = item;
+                                            firstItem = true;
+                                        }
                                     }
                                 }
                                 if ((item.level2Text.length > 1 && item.type == "STATE") || item.type != "STATE") {

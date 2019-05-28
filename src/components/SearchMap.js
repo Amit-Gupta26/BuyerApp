@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { Marker, GeoFencing } from "react-native-maps";
-import ClusteredMapView from "react-native-maps-super-cluster";
+import ClusteredMapView from "../extras/ClusteredMapView";
 import { observer, inject } from "mobx-react";
 
 let { width, height } = Dimensions.get("window");

@@ -24,7 +24,9 @@ import BedAndBathFilterView from "../../views/filters/BedAndBathFilterView";
 import ToggelBasedCell from "../../views/filters/ToggelBasedCell";
 import ListingTypeCell from "../../views/filters/ListingTypeCell";
 import DaysOnOwnersCell from "../../views/filters/DaysOnOwnersCell";
+import HomePreference from "../../views/filters/preference/HomePreference";
 import FilterTagView from '../../components/FilterTagView';
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -181,6 +183,7 @@ class Filter extends Component {
         this.props.searchStore.updatePriceReduced(this.state.priceReduced)
         this.props.searchStore.updateDaysOnowners(this.state.daysOnOwners)
         this.props.navigation.goBack()
+        this.props.searchStore.applyFilter()
     }
 
     render() {
@@ -354,6 +357,8 @@ class Filter extends Component {
                                 }
                             }}
                         />
+
+                        <HomePreference />
 
                     </ScrollView>
                     <View style={styles.BottomViewStyle}>
